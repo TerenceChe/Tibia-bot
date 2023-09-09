@@ -1,5 +1,30 @@
+# Tibia Bot
+This python bot allows users to track new logins and level ups in Tibia
+
+### Requirements
+1. [Python3](https://www.python.org/downloads/)
+
+### Installation
+
+Clone the repo:
+``` bash
+$ git clone git@github.com:TerenceChe/Tibia-bot.git
+$ cd Tibia-bot
 ```
-py -m venv env
-.\env\Scripts\activate
-pip install -r requirements.txt
+Install Virtual Env & install dependencies
+```bash
+$ py -m venv env
+$ .\env\Scripts\activate
+$ pip install -r requirements.txt
 ```
+Create and populate .env
+```bash
+echo DISCORD_TOKEN = {token} > .env
+```
+
+### Usage:
+```bash
+$ cd bot
+$ py bot.py
+```
+If everything was done correctly, the bot should now be running :)
