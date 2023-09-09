@@ -33,7 +33,8 @@ async def on_message(message):
 		send_update.start()
 	
 	if message.content == "stop":
-		send_update.cance()
+		await channel.send("Updates will no longer be sent")
+		send_update.cancel()
 
 @tasks.loop(minutes = 1)
 async def send_update():
