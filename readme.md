@@ -21,10 +21,12 @@ Create and populate .env
 ```bash
 echo DISCORD_TOKEN = {token} > .env
 ```
+Note: replace {token} with a discord bot token<br />
+Running the bot
 
-### Usage:
 ```bash
 $ cd bot
 $ py bot.py
 ```
+
 If everything was done correctly, the bot should now be running :)

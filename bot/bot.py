@@ -33,7 +33,7 @@ async def on_message(message):
 			await channel.send("Updates will be sent here every minute")
 			send_update.start()
 		
-		if message.content == "stop":
+		if message.content == "!stop":
 			await channel.send("Updates will no longer be sent")
 			send_update.cancel()
 
