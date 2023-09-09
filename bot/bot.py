@@ -26,15 +26,16 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-	if message.content == "update":
-		global channel 
-		channel = message.channel
-		await channel.send("Updates will be sent here every minute")
-		send_update.start()
-	
-	if message.content == "stop":
-		await channel.send("Updates will no longer be sent")
-		send_update.cancel()
+	if message.content.startswith("!"):
+		if message.content == "!update":
+			global channel 
+			channel = message.channel
+			await channel.send("Updates will be sent here every minute")
+			send_update.start()
+		
+		if message.content == "stop":
+			await channel.send("Updates will no longer be sent")
+			send_update.cancel()
 
 @tasks.loop(minutes = 1)
 async def send_update():

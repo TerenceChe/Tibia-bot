@@ -21,8 +21,8 @@ def get_char_map() -> CharMap:
     list_elems += results.find_all("tr", class_="Odd")
 
     for char in list_elems:
-        if len(char.strip()) == 0:
-            name = char.find_all("a")[-1].get_text().strip()
+        name = char.find_all("a")[-1].get_text().strip()
+        if len(name.strip()) > 0:
             tds = char.find_all("td")
             level = tds[-2].get_text().strip()
             vocation = tds[-1].get_text().strip()
