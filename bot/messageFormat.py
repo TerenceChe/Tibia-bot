@@ -20,7 +20,7 @@ def login_message(chars: dict[str, dict[str, str]]) -> str:
 def level_message(chars: dict[str, dict[str, str]]):
     message = ""
     if len(chars) > 0:
-        message += "Player level up:\n"
+        message += "Player level change:\n"
         header = ["Name", "Level", "Vocation"]
         body = []
         for char in chars:

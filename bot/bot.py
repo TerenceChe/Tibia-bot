@@ -31,16 +31,17 @@ async def on_message(message):
 		args = message.content.split()
 		command = args[0]
 		if command == "!update":
-			global channel 
-			channel = message.channel
+			set_channel(message.channel)
 			await channel.send("Updates will be sent here every minute")
 			send_update.start()
 		
 		elif command == "!stop":
+			set_channel(message.channel)
 			await channel.send("Updates will no longer be sent")
 			send_update.cancel()
 
 		elif command == "!filter" and args[1] == "level" and args[2].isnumeric():
+			set_channel(message.channel)
 			global min_level_filter
 			min_level_filter = int(args[2])
 			await channel.send(f"Updates will only be sent for players above level {min_level_filter}")
@@ -59,6 +60,10 @@ async def send_update():
 			await channel.send(final_message)
 
 	prev_chars = curr_chars
+
+def set_channel(c):
+	global channel
+	channel = c
 	
 
 client.run(TOKEN)
