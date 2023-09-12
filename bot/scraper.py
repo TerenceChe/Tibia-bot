@@ -3,7 +3,9 @@ from bs4 import BeautifulSoup
 from typing import TypeAlias
 
 CharMap: TypeAlias = dict[str, dict[str, str]]
-ONLINE_URL = "https://www.noxiousot.com/?subtopic=whoisonline"
+BASE_URL = "https://www.noxiousot.com"
+ONLINE_URL = "/?subtopic=whoisonline"
+CHARACTER_URL = "/?subtopic=characters&name="
 
 def get_page(URL: str) -> requests.Response:
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" }
@@ -11,7 +13,7 @@ def get_page(URL: str) -> requests.Response:
     return page
 
 def get_char_map() -> CharMap:
-    page = get_page(ONLINE_URL)
+    page = get_page(BASE_URL + ONLINE_URL)
     soup = BeautifulSoup(page.content, "html.parser")
 
     char_map = {}
@@ -30,5 +32,17 @@ def get_char_map() -> CharMap:
                 "level" : level, 
                 "vocation" : vocation
                 }
-
     return char_map
+
+def get_guild(char_name: str) -> str:
+    try:
+        page = get_page(BASE_URL + CHARACTER_URL + char_name)
+        soup = BeautifulSoup(page.content, "html.parser")
+        results = soup.find(id = "characters")
+        results = soup.find_all("a", href=lambda href: href and "?subtopic=guilds&action=show&guild=" in href)[0].get_text()
+        return results
+    except:
+        return ""
+
+if __name__ == "__main__":
+    print(get_guild("awelkf"))

@@ -3,18 +3,21 @@ from typing import TypeAlias
 
 CharMap: TypeAlias = dict[str, dict[str, str]]
 
-def get_logged_in(prev: CharMap, curr: CharMap) -> CharMap:
+def get_logged_in(prev: CharMap, curr: CharMap, min_level: int) -> CharMap:
     new_chars = {}
     for char in curr:
-        if char not in prev:
+        if (char not in prev and
+            int(curr.get(char).get("level")) > min_level):
             new_chars[char] = curr.get(char)
     return(new_chars)
 
 
-def get_level_diff(prev: CharMap, curr: CharMap) -> CharMap:
+def get_level_diff(prev: CharMap, curr: CharMap, min_level: int) -> CharMap:
     leveled_up = {}
     for char in curr:
-        if char in prev and int(curr.get(char).get("level")) > int(prev.get(char).get("level")):
+        if (char in prev and
+            int(curr.get(char).get("level")) != int(prev.get(char).get("level")) and
+            int(curr.get(char).get("level")) > min_level):
             vocation = curr.get(char).get("vocation")
             prev_lvl = prev.get(char).get("level")
             curr_lvl = curr.get(char).get("level")
