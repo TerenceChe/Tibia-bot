@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import time
 from typing import TypeAlias
 
 CharMap: TypeAlias = dict[str, dict[str, str]]
@@ -36,12 +37,23 @@ def get_char_map() -> CharMap:
     return char_map
 
 def get_last_kill(last_updated_utc):
-    page = get_page(BASE_URL, LAST_KILL_URL)
+    # print(last_updated_utc)
+    page = get_page(BASE_URL + LAST_KILL_URL)
     soup = BeautifulSoup(page.content, "html.parser")
 
     results = soup.find("div", class_ = "BoxContent")
+    trs = results.find_all("tr")
+    for tr in trs:
+        #TODO:
+        small_text = tr.find("small")
+        if small_text:
+            small_text = small_text.getText()
+            # DD.MM.YYYY, HH:MM:SS
+            kill_time = time.strptime(small_text, "%d.%m.%Y, %H:%M:%S")
+            print(kill_time)
+            # get time from tr.text
 
-    # TODO
+            # get characters from tr.find_all("a")
 
 def get_guild(char_name: str) -> str:
     try:
@@ -54,4 +66,6 @@ def get_guild(char_name: str) -> str:
         return ""
 
 if __name__ == "__main__":
-    print(get_guild("awelkf"))
+    curr_time = time.gmtime()
+    # time.sleep(10)
+    print(get_last_kill(curr_time))
