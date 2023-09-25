@@ -1,4 +1,5 @@
 from table2ascii import table2ascii as t2a, PresetStyle
+from typing import List
 
 def login_message(chars: dict[str, dict[str, str]]) -> str:
     message = ""
@@ -34,6 +35,9 @@ def level_message(chars: dict[str, dict[str, str]]):
         message = colour(message)
     return message
 
+def last_kill_msg(msg: List[str]) -> str:
+    return '\n'.join(msg)
+
 def simplify_vocation(message:str) -> str:
     name_map = {
         "Elder Druid" : "Druid",
@@ -57,3 +61,16 @@ def colour(message: str) -> str:
     for vocation in colour_map:
         message = message.replace(vocation, colour_map.get(vocation))
     return message
+
+if __name__ == "__main__":
+    print(last_kill_msg(
+        ['lave Of The Law killed at level 209 by Rick Muttley and by Snaike.', 
+         'icsocer died at level 114 by a dragon lord and by Vicsocer.', 
+         'Magicice died at level 216 by a dragon lord, by Davion God and by Earthbeam.', 
+         'Raczidian died at level 236 by a hydra, by Cares, by Davion God and by Slave Of The Law.',
+        'Pwe killed at level 260 by Earthbeam, by Nomb and by Moonbeam.',
+        'Davion God died at level 302 by a dark hunter, by a mythra guardian, by Slave Of The Law, by a mythra worshipper and by a dagger wasp.',
+        'Arthur Morgan killed at level 212 by Earthbeam, by Cares and by Davion God.',
+        'Kowaalski killed at level 216 by Earthbeam, by Nivek Of Rivia, by Carding Fisico Nevermoore and by Davion God.',
+        'El Forest killed at level 233 by Earthbeam, by Nivek Of Rivia, by Carding Fisico Nevermoore, by Davion God and by an illusion rat.', 
+        'Linda Danis killed at level 194 by Earthbeam, by Davion God, by Nivek Of Rivia and by an illusion rat.']))

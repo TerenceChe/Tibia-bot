@@ -36,24 +36,28 @@ def get_char_map() -> CharMap:
                 }
     return char_map
 
-def get_last_kill(last_updated_utc):
-    # print(last_updated_utc)
+def get_last_kill_data(last_updated_utc):
+
+    res = []
     page = get_page(BASE_URL + LAST_KILL_URL)
     soup = BeautifulSoup(page.content, "html.parser")
 
     results = soup.find("div", class_ = "BoxContent")
     trs = results.find_all("tr")
     for tr in trs:
-        #TODO:
         small_text = tr.find("small")
         if small_text:
             small_text = small_text.getText()
             # DD.MM.YYYY, HH:MM:SS
             kill_time = time.strptime(small_text, "%d.%m.%Y, %H:%M:%S")
-            print(kill_time)
-            # get time from tr.text
-
-            # get characters from tr.find_all("a")
+            if not kill_time:
+                break
+            else:
+                if last_updated_utc < kill_time:
+                    names = tr.find_all("a")
+                    if len(names) > 1:
+                        res.append(tr.text[23:])
+    return res
 
 def get_guild(char_name: str) -> str:
     try:
@@ -67,5 +71,6 @@ def get_guild(char_name: str) -> str:
 
 if __name__ == "__main__":
     curr_time = time.gmtime()
+
     # time.sleep(10)
     print(get_last_kill(curr_time))

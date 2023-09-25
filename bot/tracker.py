@@ -1,5 +1,5 @@
 import scraper
-from typing import TypeAlias
+from typing import TypeAlias, List
 
 CharMap: TypeAlias = dict[str, dict[str, str]]
 
@@ -31,5 +31,5 @@ def get_level_diff(prev: CharMap, curr: CharMap, min_level: int) -> CharMap:
 def get_curr_chars() -> CharMap:
     return scraper.get_char_map()
 
-def get_last_kill(chars):
-    pass
+def get_last_kill(last_updated_utc) -> List[str]:
+    return scraper.get_last_kill_data(last_updated_utc)
