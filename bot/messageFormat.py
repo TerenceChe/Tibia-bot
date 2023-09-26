@@ -1,4 +1,6 @@
 from table2ascii import table2ascii as t2a, PresetStyle
+from typing import List
+import time
 
 def login_message(chars: dict[str, dict[str, str]]) -> str:
     message = ""
@@ -33,6 +35,23 @@ def level_message(chars: dict[str, dict[str, str]]):
         message += f"```ansi\n{table}```"
         message = colour(message)
     return message
+
+def last_kill_message(kill_data: List[str], last_updated: time.struct_time):
+    message = ""
+    if kill_data:
+        message += "Last Kills:\n"
+        header = ["Date", "Name", "Killers"]
+        body = []
+        for kill in kill_data:
+            date = kill[0]
+            player = kill[1]
+            killers = ", ".join(kill[2])
+            body.append([date, player, killers])
+
+        table = t2a(header = header, body = body, style = PresetStyle.thin_compact)
+        message += f"```ansi\n{table}```"
+            
+    return message, last_updated
 
 def simplify_vocation(message:str) -> str:
     name_map = {

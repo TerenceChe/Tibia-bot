@@ -1,11 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
-from typing import TypeAlias
+import time
+from typing import TypeAlias, List
 
 CharMap: TypeAlias = dict[str, dict[str, str]]
 BASE_URL = "https://www.noxiousot.com"
 ONLINE_URL = "/?subtopic=whoisonline"
 CHARACTER_URL = "/?subtopic=characters&name="
+LAST_KILL_URL = "/?subtopic=killstatistics"
 
 def get_page(URL: str) -> requests.Response:
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" }
@@ -34,6 +36,33 @@ def get_char_map() -> CharMap:
                 }
     return char_map
 
+def get_last_kill_data(last_updated_utc):
+    last_kill_time = last_updated_utc
+
+    res = []
+    page = get_page(BASE_URL + LAST_KILL_URL)
+    soup = BeautifulSoup(page.content, "html.parser")
+
+    results = soup.find("div", class_ = "BoxContent")
+    trs = results.find_all("tr")
+    for tr in trs:
+        small_text = tr.find("small")
+        if small_text:
+            small_text = small_text.getText()
+            # DD.MM.YYYY, HH:MM:SS
+            kill_time = time.strptime(small_text, "%d.%m.%Y, %H:%M:%S")
+            if not kill_time:
+                break
+            else:
+                if last_updated_utc < kill_time:
+                    names = tr.find_all("a")
+                    names = list(map(lambda x : x.text, names))
+                    if len(names) > 1:
+                        last_kill_time = last_kill_time if last_kill_time > kill_time else kill_time
+                        date = small_text
+                        res.append((date, names[0], names[1:]))
+    return res, last_kill_time
+
 def get_guild(char_name: str) -> str:
     try:
         page = get_page(BASE_URL + CHARACTER_URL + char_name)
@@ -43,6 +72,3 @@ def get_guild(char_name: str) -> str:
         return results
     except:
         return ""
-
-if __name__ == "__main__":
-    print(get_guild("awelkf"))
