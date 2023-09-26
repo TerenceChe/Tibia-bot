@@ -44,7 +44,7 @@ async def on_message(message):
 				set_login_channel(message.channel, True)
 				updates.append("Login")
 			if "kills" in args or "kill" in args:
-				set_lask_kill_channel(message.channel, True)
+				set_last_kill_channel(message.channel, True)
 				updates.append("Last Kill")
 			if "levels" in args or "level" in args:
 				set_level_channel(message.channel, True)
@@ -53,18 +53,17 @@ async def on_message(message):
 				update_msg = ", ".join(updates)
 				update_msg += " updates will be sent here every minute"
 				await message.channel.send(update_msg)
-
-			if not send_update.is_running:
+			if not send_update.is_running():
 				send_update.start()
 		
 		elif command == "!stop":
 			stops = []
-			if "login" in args:
+			if "login" in args and send_login_updates:
 				set_login_channel(None, False)
 				stops.append("Login")
-			if "kills" in args or "kill" in args:
+			if "kills" in args or "kill" in args and send_last_kill_updates:
 				stops.append("Last kill")
-				send_last_kill_updates(None, False)
+				set_last_kill_channel(None, False)
 			if "levels" in args or "level" in args:
 				stops.append("Level")
 				set_level_channel(None, False)
@@ -89,7 +88,6 @@ async def send_update():
 	global last_updated_utc
 
 	curr_chars = tracker.get_curr_chars()
-	print(send_login_updates, send_level_updates, send_last_kill_updates)
 	if send_login_updates:
 		if prev_chars:
 			login_message = messageFormat.login_message(tracker.get_logged_in(prev_chars, curr_chars, min_level_filter))
@@ -105,9 +103,7 @@ async def send_update():
 	if send_last_kill_updates:
 		last_kill_message, last_kill_time = messageFormat.last_kill_message(*tracker.get_last_kill(last_updated_utc))
 		curr_time = time.gmtime(time.time() - 14400)
-		print(last_kill_time, curr_time)
 		last_updated_utc = last_kill_time if last_kill_time > curr_time else curr_time
-		print(last_updated_utc)
 		if last_kill_message:
 			await last_kill_channel.send(last_kill_message)
 
@@ -119,7 +115,7 @@ def set_login_channel(c, update):
 	login_channel = c
 	send_login_updates = update
 	
-def set_lask_kill_channel(c, update):
+def set_last_kill_channel(c, update):
 	global last_kill_channel
 	global send_last_kill_updates
 	last_kill_channel = c
