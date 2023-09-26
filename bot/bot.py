@@ -17,7 +17,7 @@ min_level_filter = 0
 send_login_updates = False
 send_last_kill_updates = False
 send_level_updates = False
-last_updated_utc = time.gmtime()
+last_updated_utc = time.gmtime(time.time() - 14400)
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -43,19 +43,16 @@ async def on_message(message):
 			if "login" in args:
 				set_login_channel(message.channel, True)
 				updates.append("Login")
-				# await login_channel.send("Login updates will be sent here every minute")
 			if "kills" in args or "kill" in args:
 				set_lask_kill_channel(message.channel, True)
 				updates.append("Last Kill")
-				# await last_kill_channel.send("Last kill updates will be sent here every minute")
 			if "levels" in args or "level" in args:
 				set_level_channel(message.channel, True)
 				updates.append("Level")
-				# await level_channel.send("Level updates will be sent here every minute")
 			if len(updates) > 0:
 				update_msg = ", ".join(updates)
 				update_msg += " updates will be sent here every minute"
-				message.channel.send(update_msg)
+				await message.channel.send(update_msg)
 
 			if not send_update.is_running:
 				send_update.start()
@@ -92,25 +89,29 @@ async def send_update():
 	global last_updated_utc
 
 	curr_chars = tracker.get_curr_chars()
+	print(send_login_updates, send_level_updates, send_last_kill_updates)
 	if send_login_updates:
-		if len(prev_chars) > 0:
+		if prev_chars:
 			login_message = messageFormat.login_message(tracker.get_logged_in(prev_chars, curr_chars, min_level_filter))
-			if len(login_message) > 0:
+			if login_message:
 				await login_channel.send(login_message)
 	
 	if send_level_updates:
-		if len(prev_chars) > 0:
+		if prev_chars:
 			level_up_message = messageFormat.level_message(tracker.get_level_diff(prev_chars, curr_chars, min_level_filter))
-			if len(level_up_message) > 0:
+			if level_up_message:
 				await level_channel.send(level_up_message)
 
 	if send_last_kill_updates:
-		last_kill_message = messageFormat.last_kill_message(tracker.get_last_kill(last_updated_utc))
-		if len(last_kill_message) > 0:
+		last_kill_message, last_kill_time = messageFormat.last_kill_message(*tracker.get_last_kill(last_updated_utc))
+		curr_time = time.gmtime(time.time() - 14400)
+		print(last_kill_time, curr_time)
+		last_updated_utc = last_kill_time if last_kill_time > curr_time else curr_time
+		print(last_updated_utc)
+		if last_kill_message:
 			await last_kill_channel.send(last_kill_message)
 
 	prev_chars = curr_chars
-	last_updated_utc = time.gmtime()
 
 def set_login_channel(c, update):
 	global login_channel

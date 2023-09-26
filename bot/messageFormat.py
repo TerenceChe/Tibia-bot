@@ -1,5 +1,6 @@
 from table2ascii import table2ascii as t2a, PresetStyle
 from typing import List
+import time
 
 def login_message(chars: dict[str, dict[str, str]]) -> str:
     message = ""
@@ -35,8 +36,22 @@ def level_message(chars: dict[str, dict[str, str]]):
         message = colour(message)
     return message
 
-def last_kill_msg(msg: List[str]) -> str:
-    return '\n'.join(msg)
+def last_kill_message(kill_data: List[str], last_updated: time.struct_time):
+    message = ""
+    if kill_data:
+        message += "Last Kills:\n"
+        header = ["Date", "Name", "Killers"]
+        body = []
+        for kill in kill_data:
+            date = kill[0]
+            player = kill[1]
+            killers = ", ".join(kill[2])
+            body.append([date, player, killers])
+
+        table = t2a(header = header, body = body, style = PresetStyle.thin_compact)
+        message += f"```ansi\n{table}```"
+            
+    return message, last_updated
 
 def simplify_vocation(message:str) -> str:
     name_map = {
@@ -61,16 +76,3 @@ def colour(message: str) -> str:
     for vocation in colour_map:
         message = message.replace(vocation, colour_map.get(vocation))
     return message
-
-if __name__ == "__main__":
-    print(last_kill_msg(
-        ['lave Of The Law killed at level 209 by Rick Muttley and by Snaike.', 
-         'icsocer died at level 114 by a dragon lord and by Vicsocer.', 
-         'Magicice died at level 216 by a dragon lord, by Davion God and by Earthbeam.', 
-         'Raczidian died at level 236 by a hydra, by Cares, by Davion God and by Slave Of The Law.',
-        'Pwe killed at level 260 by Earthbeam, by Nomb and by Moonbeam.',
-        'Davion God died at level 302 by a dark hunter, by a mythra guardian, by Slave Of The Law, by a mythra worshipper and by a dagger wasp.',
-        'Arthur Morgan killed at level 212 by Earthbeam, by Cares and by Davion God.',
-        'Kowaalski killed at level 216 by Earthbeam, by Nivek Of Rivia, by Carding Fisico Nevermoore and by Davion God.',
-        'El Forest killed at level 233 by Earthbeam, by Nivek Of Rivia, by Carding Fisico Nevermoore, by Davion God and by an illusion rat.', 
-        'Linda Danis killed at level 194 by Earthbeam, by Davion God, by Nivek Of Rivia and by an illusion rat.']))

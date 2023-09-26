@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import time
-from typing import TypeAlias
+from typing import TypeAlias, List
 
 CharMap: TypeAlias = dict[str, dict[str, str]]
 BASE_URL = "https://www.noxiousot.com"
@@ -37,6 +37,7 @@ def get_char_map() -> CharMap:
     return char_map
 
 def get_last_kill_data(last_updated_utc):
+    last_kill_time = last_updated_utc
 
     res = []
     page = get_page(BASE_URL + LAST_KILL_URL)
@@ -55,9 +56,12 @@ def get_last_kill_data(last_updated_utc):
             else:
                 if last_updated_utc < kill_time:
                     names = tr.find_all("a")
+                    names = list(map(lambda x : x.text, names))
                     if len(names) > 1:
-                        res.append(tr.text[23:])
-    return res
+                        last_kill_time = last_kill_time if last_kill_time > kill_time else kill_time
+                        date = small_text
+                        res.append((date, names[0], names[1:]))
+    return res, last_kill_time
 
 def get_guild(char_name: str) -> str:
     try:
@@ -68,9 +72,3 @@ def get_guild(char_name: str) -> str:
         return results
     except:
         return ""
-
-if __name__ == "__main__":
-    curr_time = time.gmtime()
-
-    # time.sleep(10)
-    print(get_last_kill(curr_time))
