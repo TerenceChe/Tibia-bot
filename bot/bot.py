@@ -116,7 +116,7 @@ async def on_message(message):
             set_level_channel(message.channel, send_level_updates)
             global min_level_filter
             min_level_filter = int(args[2])
-            await level_channel.send(f"Level updates will only be sent for players above level {min_level_filter}")
+            await message.channel.send(f"Level updates will only be sent for players above level {min_level_filter}")
         elif command == "!status":
             await get_bot_status_message(message.channel)
 
