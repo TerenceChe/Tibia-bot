@@ -113,7 +113,6 @@ async def on_message(message):
             if (send_login_updates == False and send_level_updates == False and send_last_kill_updates == False):
                 send_update.cancel()
         elif command == "!filter" and args[1] == "level" and args[2].isnumeric():
-            # set_level_channel(message.channel, send_level_updates)
             global min_level_filter
             min_level_filter = int(args[2])
             await message.channel.send(f"Level updates will only be sent for players above level {min_level_filter}")
