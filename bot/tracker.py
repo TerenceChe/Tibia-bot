@@ -32,5 +32,5 @@ def get_level_diff(prev: CharMap, curr: CharMap, min_level: int) -> CharMap:
 def get_curr_chars() -> CharMap:
     return scraper.get_char_map()
 
-def get_last_kill(last_updated_utc):
+def get_last_kill(last_updated_utc) -> tuple[List[str], time.struct_time]:
     return scraper.get_last_kill_data(last_updated_utc)

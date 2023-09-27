@@ -36,7 +36,7 @@ def get_char_map() -> CharMap:
                 }
     return char_map
 
-def get_last_kill_data(last_updated_utc):
+def get_last_kill_data(last_updated_utc: time.struct_time) -> tuple[List[str], time.struct_time]:
     last_kill_time = last_updated_utc
 
     res = []
@@ -55,8 +55,7 @@ def get_last_kill_data(last_updated_utc):
                 break
             else:
                 if last_updated_utc < kill_time:
-                    names = tr.find_all("a")
-                    names = list(map(lambda x : x.text, names))
+                    names = [name.text for name in tr.find_all("a")]
                     if len(names) > 1:
                         last_kill_time = last_kill_time if last_kill_time > kill_time else kill_time
                         date = small_text
