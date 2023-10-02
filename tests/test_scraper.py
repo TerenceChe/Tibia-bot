@@ -1,4 +1,4 @@
-from bot.scraper import get_page, get_char_map
+from scraper import get_page, get_char_map
 
 class TestScraper:
     def test_get_page(self):
