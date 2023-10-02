@@ -1,3 +1,12 @@
+"""
+The `tracker` module contains functions for tracking player data in the game.
+
+Functions:
+- get_logged_in(prev, curr, min_level): Gets the players who have logged in since the previous check.
+- get_level_diff(prev, curr, min_level): Gets the players who have leveled up since the previous check.
+- get_curr_chars(): Gets the current character map from the game server.
+- get_last_kill(last_updated_utc): Gets the last kill data since the specified time.
+"""
 import scraper
 import time
 from typing import TypeAlias, List
@@ -10,7 +19,7 @@ def get_logged_in(prev: CharMap, curr: CharMap, min_level: int) -> CharMap:
         if (char not in prev and
             int(curr.get(char).get("level")) > min_level):
             new_chars[char] = curr.get(char)
-    return(new_chars)
+    return new_chars
 
 
 def get_level_diff(prev: CharMap, curr: CharMap, min_level: int) -> CharMap:

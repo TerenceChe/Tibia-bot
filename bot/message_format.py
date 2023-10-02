@@ -1,3 +1,11 @@
+"""
+The `message_format` module contains functions for formatting messages to send to Discord channels.
+
+Functions:
+- login_message(char_map): Formats a message about player logins.
+- level_message(char_map): Formats a message about player level ups.
+- last_kill_message(killer, victim, weapon): Formats a message about the last kill.
+"""
 from table2ascii import table2ascii as t2a, PresetStyle
 from typing import List
 import time
@@ -7,7 +15,8 @@ def login_message(chars: dict[str, dict[str, str]]) -> str:
     if chars:
         message += "New player logins:\n"
         header = ["Name", "Level", "Vocation"]
-        body = [[char, chars[char]['level'], simplify_vocation(chars[char]['vocation'])] for char in chars]
+        body = [[char, chars[char]['level'], 
+                 simplify_vocation(chars[char]['vocation'])] for char in chars]
         table = t2a(header=header, body=body, style=PresetStyle.thin_compact)
         message += f"```ansi\n{table}```"
         message = colour(message)
@@ -18,13 +27,15 @@ def level_message(chars: dict[str, dict[str, str]]) -> str:
     if chars:
         message += "Player level change:\n"
         header = ["Name", "Level", "Vocation"]
-        body = [[char, f"{chars[char]['prev_lvl']} -> {chars[char]['curr_lvl']}", simplify_vocation(chars[char]['vocation'])] for char in chars]
+        body = [[char, f"{chars[char]['prev_lvl']} -> {chars[char]['curr_lvl']}", 
+                 simplify_vocation(chars[char]['vocation'])] for char in chars]
         table = t2a(header=header, body=body, style=PresetStyle.thin_compact)
         message += f"```ansi\n{table}```"
         message = colour(message)
     return message
 
-def last_kill_message(kill_data: List[str], last_updated: time.struct_time) -> tuple[str, time.struct_time]:
+def last_kill_message(kill_data: List[str], 
+                      last_updated: time.struct_time) -> tuple[str, time.struct_time]:
     message = ""
     if kill_data:
         message += "Last Kills:\n"

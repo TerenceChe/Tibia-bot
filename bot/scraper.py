@@ -1,3 +1,12 @@
+"""
+The `scraper` module contains functions for scraping player data from the game server.
+
+Functions:
+- get_char_map(): Gets the current character map from the game server.
+- get_logged_in(prev, curr): Gets the players who have logged in since the previous check.
+- get_level_diff(prev, curr): Gets the players who have leveled up since the previous check.
+- get_last_kill(last_updated_utc): Gets the last kill data since the specified time.
+"""
 import requests
 from bs4 import BeautifulSoup
 import time
