@@ -7,7 +7,7 @@ from discord.ext import tasks
 from dotenv import load_dotenv
 
 import tracker
-import messageFormat
+import bot.message_format as message_format
 
 # Load the environment variables
 load_dotenv()
@@ -127,16 +127,16 @@ async def send_update():
     curr_chars = tracker.get_curr_chars()
     if send_login_updates:
         if prev_chars:
-            login_message = messageFormat.login_message(tracker.get_logged_in(prev_chars, curr_chars, min_level_filter))
+            login_message = message_format.login_message(tracker.get_logged_in(prev_chars, curr_chars, min_level_filter))
             if login_message:
                 await login_channel.send(login_message)
     if send_level_updates:
         if prev_chars:
-            level_up_message = messageFormat.level_message(tracker.get_level_diff(prev_chars, curr_chars, min_level_filter))
+            level_up_message = message_format.level_message(tracker.get_level_diff(prev_chars, curr_chars, min_level_filter))
             if level_up_message:
                 await level_channel.send(level_up_message)
     if send_last_kill_updates:
-        last_kill_message, last_kill_time = messageFormat.last_kill_message(*tracker.get_last_kill(last_updated_utc))
+        last_kill_message, last_kill_time = message_format.last_kill_message(*tracker.get_last_kill(last_updated_utc))
         curr_time = time.gmtime(time.time() - 14400)
         last_updated_utc = last_kill_time if last_kill_time > curr_time else curr_time
         if last_kill_message:
