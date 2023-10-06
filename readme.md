@@ -1,6 +1,6 @@
-# Tibia Bot
+# Tracaking Bot
 
-This python bot allows users to track new logins and level ups in Tibia
+This python bot allows users to track new logins and level ups in a video game
 
 ### Requirements
 
@@ -11,8 +11,8 @@ This python bot allows users to track new logins and level ups in Tibia
 Clone the repo:
 
 ```bash
-$ git clone git@github.com:TerenceChe/Tibia-bot.git
-$ cd Tibia-bot
+$ git clone git@github.com:TerenceChe/Tracking-bot.git
+$ cd Tracking-bot
 ```
 
 Install Virtual Env & install dependencies
