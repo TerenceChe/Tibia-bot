@@ -7,10 +7,11 @@ Functions:
 - get_level_diff(prev, curr): Gets the players who have leveled up since the previous check.
 - get_last_kill(last_updated_utc): Gets the last kill data since the specified time.
 """
-import requests
-from bs4 import BeautifulSoup
 import time
 from typing import TypeAlias, List
+
+import requests
+from bs4 import BeautifulSoup
 
 CharMap: TypeAlias = dict[str, dict[str, str]]
 BASE_URL = "https://www.noxiousot.com"
@@ -18,12 +19,19 @@ ONLINE_URL = "/?subtopic=whoisonline"
 CHARACTER_URL = "/?subtopic=characters&name="
 LAST_KILL_URL = "/?subtopic=killstatistics"
 
-def get_page(URL: str) -> requests.Response:
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" }
-    page = requests.get(URL, headers=headers)
+def get_page(url: str) -> requests.Response:
+    """
+    Gets the page from the specified URL.
+    """
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+               AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" }
+    page = requests.get(url, headers = headers, timeout = 5)
     return page
 
 def get_char_map() -> CharMap:
+    """
+    Gets the current character map from the game server.
+    """
     page = get_page(BASE_URL + ONLINE_URL)
     soup = BeautifulSoup(page.content, "html.parser")
 
@@ -46,6 +54,9 @@ def get_char_map() -> CharMap:
     return char_map
 
 def get_last_kill_data(last_updated_utc: time.struct_time) -> tuple[List[str], time.struct_time]:
+    """
+    Gets the last kill data since the specified time.
+    """
     last_kill_time = last_updated_utc
 
     res = []
@@ -60,23 +71,24 @@ def get_last_kill_data(last_updated_utc: time.struct_time) -> tuple[List[str], t
             small_text = small_text.getText()
             # DD.MM.YYYY, HH:MM:SS
             kill_time = time.strptime(small_text, "%d.%m.%Y, %H:%M:%S")
-            if not kill_time:
-                break
-            else:
-                if last_updated_utc < kill_time:
-                    names = [name.text for name in tr.find_all("a")]
-                    if len(names) > 1:
-                        last_kill_time = last_kill_time if last_kill_time > kill_time else kill_time
-                        date = small_text
-                        res.append((date, names[0], names[1:]))
+            if kill_time and last_updated_utc < kill_time:
+                names = [name.text for name in tr.find_all("a")]
+                if len(names) > 1:
+                    last_kill_time = last_kill_time if last_kill_time > kill_time else kill_time
+                    date = small_text
+                    res.append((date, names[0], names[1:]))
     return res, last_kill_time
 
 def get_guild(char_name: str) -> str:
+    """
+    Gets the guild of the specified character.
+    """
     try:
         page = get_page(BASE_URL + CHARACTER_URL + char_name)
         soup = BeautifulSoup(page.content, "html.parser")
         results = soup.find(id = "characters")
-        results = soup.find_all("a", href=lambda href: href and "?subtopic=guilds&action=show&guild=" in href)[0].get_text()
+        results = soup.find_all("a", href = lambda href: href and
+                                "?subtopic=guilds&action=show&guild=" in href)[0].get_text()
         return results
-    except:
+    except IndexError:
         return ""

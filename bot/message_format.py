@@ -6,16 +6,20 @@ Functions:
 - level_message(char_map): Formats a message about player level ups.
 - last_kill_message(killer, victim, weapon): Formats a message about the last kill.
 """
-from table2ascii import table2ascii as t2a, PresetStyle
-from typing import List
 import time
+from typing import List
+
+from table2ascii import table2ascii as t2a, PresetStyle
 
 def login_message(chars: dict[str, dict[str, str]]) -> str:
+    """
+    Formats a message about player logins.
+    """
     message = ""
     if chars:
         message += "New player logins:\n"
         header = ["Name", "Level", "Vocation"]
-        body = [[char, chars[char]['level'], 
+        body = [[char, chars[char]['level'],
                  simplify_vocation(chars[char]['vocation'])] for char in chars]
         table = t2a(header=header, body=body, style=PresetStyle.thin_compact)
         message += f"```ansi\n{table}```"
@@ -23,19 +27,25 @@ def login_message(chars: dict[str, dict[str, str]]) -> str:
     return message
 
 def level_message(chars: dict[str, dict[str, str]]) -> str:
+    """
+    Formats a message about player level ups.
+    """
     message = ""
     if chars:
         message += "Player level change:\n"
         header = ["Name", "Level", "Vocation"]
-        body = [[char, f"{chars[char]['prev_lvl']} -> {chars[char]['curr_lvl']}", 
+        body = [[char, f"{chars[char]['prev_lvl']} -> {chars[char]['curr_lvl']}",
                  simplify_vocation(chars[char]['vocation'])] for char in chars]
         table = t2a(header=header, body=body, style=PresetStyle.thin_compact)
         message += f"```ansi\n{table}```"
         message = colour(message)
     return message
 
-def last_kill_message(kill_data: List[str], 
+def last_kill_message(kill_data: List[str],
                       last_updated: time.struct_time) -> tuple[str, time.struct_time]:
+    """
+    Formats a message about the last kill.
+    """
     message = ""
     if kill_data:
         message += "Last Kills:\n"
@@ -46,6 +56,9 @@ def last_kill_message(kill_data: List[str],
     return message, last_updated
 
 def simplify_vocation(message: str) -> str:
+    """
+    Simplifies the vocation name to a shorter version.
+    """
     name_map = {
         "Elder Druid": "Druid",
         "Royal Paladin": "Paladin",
@@ -55,6 +68,9 @@ def simplify_vocation(message: str) -> str:
     return reduce_string(message, name_map)
 
 def colour(message: str) -> str:
+    """
+    Adds colour to the vocation names.
+    """
     colour_map = {
         "Druid": "\u001b[0;32mDruid\u001b[0;0m",
         "Paladin": "\u001b[0;33mPaladin\u001b[0;0m",
@@ -64,6 +80,9 @@ def colour(message: str) -> str:
     return reduce_string(message, colour_map)
 
 def reduce_string(message: str, string_map: dict[str, str]) -> str:
+    """
+    Replaces substrings (key) in a string with other substrings (value).
+    """
     for key, value in string_map.items():
         message = message.replace(key, value)
     return message

@@ -2,18 +2,22 @@
 The `tracker` module contains functions for tracking player data in the game.
 
 Functions:
-- get_logged_in(prev, curr, min_level): Gets the players who have logged in since the previous check.
-- get_level_diff(prev, curr, min_level): Gets the players who have leveled up since the previous check.
+- get_logged_in(prev, curr, min_level): Gets the players who logged in since the previous check.
+- get_level_diff(prev, curr, min_level): Gets the players who leveled up since the previous check.
 - get_curr_chars(): Gets the current character map from the game server.
 - get_last_kill(last_updated_utc): Gets the last kill data since the specified time.
 """
-import scraper
 import time
 from typing import TypeAlias, List
+
+import scraper
 
 CharMap: TypeAlias = dict[str, dict[str, str]]
 
 def get_logged_in(prev: CharMap, curr: CharMap, min_level: int) -> CharMap:
+    """
+    Returns characters that logged in since the previous update.
+    """
     new_chars = {}
     for char in curr:
         if (char not in prev and
@@ -23,6 +27,9 @@ def get_logged_in(prev: CharMap, curr: CharMap, min_level: int) -> CharMap:
 
 
 def get_level_diff(prev: CharMap, curr: CharMap, min_level: int) -> CharMap:
+    """
+    Returns characters that leveled up since the previous update.
+    """
     leveled_up = {}
     for char in curr:
         if (char in prev and
@@ -39,7 +46,14 @@ def get_level_diff(prev: CharMap, curr: CharMap, min_level: int) -> CharMap:
     return leveled_up
 
 def get_curr_chars() -> CharMap:
+    """
+    Returns a dictionary of characters from the current update.
+    """
     return scraper.get_char_map()
 
 def get_last_kill(last_updated_utc) -> tuple[List[str], time.struct_time]:
+    """
+    Returns a tuple containing a list of characters that 
+    participated in the last kill and the time of the last kill.
+    """
     return scraper.get_last_kill_data(last_updated_utc)
