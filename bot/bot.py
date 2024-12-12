@@ -3,11 +3,12 @@ import time
 
 import discord
 from discord.ext import tasks
+from discord import app_commands
 
 from dotenv import load_dotenv
 
 import tracker
-import bot.message_format as message_format
+import message_format
 
 # Load the environment variables
 load_dotenv()
@@ -28,6 +29,7 @@ last_updated_utc = time.gmtime(time.time() - 14400)
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
+tree = app_commands.CommandTree(client)
 
 # Define a function to set the login channel and update status
 def set_login_channel(c, update):
@@ -62,6 +64,15 @@ async def get_bot_status_message(channel):
     if status_message:
         await channel.send("\n".join(status_message))
 
+@tree.command(
+        name="enable-login",
+        description="Enables login tracking",
+        guild=discord.Object(id=1149098249911799838)
+)
+async def first_command(interaction):
+    set_login_channel(interaction.channel, True)
+    await interaction.response.send_message("Login updates will be sent here every minute")
+
 # Define the on_ready event handler
 @client.event
 async def on_ready():
@@ -69,6 +80,7 @@ async def on_ready():
     for guild in client.guilds:
         print(f"- {guild.id} (name: {guild.name})")
         guild_count = guild_count + 1
+        await tree.sync(guild = guild)
     print("Rage Room is in " + str(guild_count) + " guilds.")
     send_update.start()
 
